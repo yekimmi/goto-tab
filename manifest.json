@@ -1,0 +1,9 @@
+{
+  "name": "goto tab",
+  "version": "0.1",
+  "description": "goto tab",
+  "omnibox" : {"keyword" : "gt"},
+  "background_page": "background.html",
+  "icons" : {},
+  "permissions": ["tabs", "http://*/*","https://*/*","notifications"]
+}
