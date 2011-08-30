@@ -1,3 +1,5 @@
+// need to add this because functions may be called elsewhere
+var win = window;
 function SelectItem(item, tabId) {
   this.item = item;
   this.tabId = tabId;
@@ -24,6 +26,21 @@ function SelectionNav(items, selected) {
     }
     this.selected = selected;
     this.selected.item.addClass("selected");
+  };
+  this.updateSorts = function() {
+    this.xItems.sort(this.xSorter);
+    this.yItems.sort(this.ySorter);
+    // initialize indices
+    for (xIndex in this.xItems) {
+      var xItem = this.xItems[xIndex];
+      xItem.xIndex = parseInt(xIndex);
+    }
+    for (yIndex in this.yItems) {
+      var yItem = this.yItems[yIndex];
+      yItem.yIndex = parseInt(yIndex);
+      console.log("? " + yItem.item.position().top);
+    }
+    // this.updateSelected(this.selected);
   };
   this.moveRight = function() {
     var start = this.selected.xIndex + 1;
@@ -62,7 +79,6 @@ function SelectionNav(items, selected) {
     var lastDistance = 0;
     while (slice.length > 0) {
       var item = slice[slice.length - 1];
-      console.log(item.item.position().left);
       if (item.item.position().left < this.selected.item.position().left) {
         if (next == null) {
           next = item;
@@ -201,8 +217,13 @@ $(function() {
       if (items.length == 0) {
         return;
       }
+      var nav = new SelectionNav(items, items[0]);
+      $(win).resize(function() {
+        container.masonry("layout", [], function() {
+          nav.updateSorts();
+        });
+      });
       container.masonry("layout", [], function() {
-        var nav = new SelectionNav(items, items[0]);
         $(document).bind('keydown', 'k', function() {
           nav.moveUp();
         });
