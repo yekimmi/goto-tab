@@ -9,18 +9,47 @@ var cache = {
       return parseInt(id);
     }
   },
+  clear : function() {
+    localStorage.removeItem(this.key);
+  },
   has : function() {
     return localStorage.getItem(this.key) != null;
   }
 };
+// update current
 var currentId;
-chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
-  if (currentId != null) {
-    cache.update(currentId);
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  // this is because we are closing the tab we are viewing
+  if (tabId == currentId) {
+    // make the current the history one
+    currentId = cache.get();
   }
-  currentId = tabId;
+  else if (tabId == cache.get()){
+    cache.clear();
+  }
+});
+chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+  chrome.tabs.get(tabId, function(tab) {
+    var listPage = chrome.extension.getURL("page_select.html");
+    // dont store the listPage
+    if (listPage != tab.url) {
+      if (currentId != null) {
+        cache.update(currentId);
+      }
+      currentId = tabId;
+    }
+  });
 });
 chrome.omnibox.onInputEntered.addListener(function(text) {
+  text = text.trim();
+  // show page list
+  if (text == "" || text == "_grid_view") {
+    var listPage = chrome.extension.getURL("page_select.html");
+    chrome.tabs.create({
+      url : listPage
+    });
+    return;
+  }
   var id = null;
   if (text == "-" || text == "_last_tab") {
     // go to last if exists
@@ -45,11 +74,17 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
 });
 chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
   var suggestions = [];
+  search = search.trim();
   if (search == "-" && cache.has()) {
-    console.log("here");
     suggestions.push({
       content : "_last_tab",
-      description : "<match>goto last tab</match>"
+      description : "last viewed tab"
+    });
+  }
+  if (search == "") {
+    suggestions.push({
+      content : "_grid_view",
+      description : "show grid view"
     });
   }
   findTabs(search, function(tabs) {
