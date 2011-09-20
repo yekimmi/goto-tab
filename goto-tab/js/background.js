@@ -43,13 +43,14 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
 chrome.omnibox.onInputEntered.addListener(function(text) {
   text = text.trim();
   // show page list
-  if (text == "" || text == "_grid_view") {
-    var listPage = chrome.extension.getURL("page_select.html");
-    chrome.tabs.create({
-      url : listPage
-    });
-    return;
-  }
+  // experimental
+//  if (text == "" || text == "_grid_view") {
+//    var listPage = chrome.extension.getURL("page_select.html");
+//    chrome.tabs.create({
+//      url : listPage
+//    });
+//    return;
+//  }
   var id = null;
   if (text == "-" || text == "_last_tab") {
     // go to last if exists
@@ -81,12 +82,13 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
       description : "last viewed tab"
     });
   }
-  if (search == "") {
-    suggestions.push({
-      content : "_grid_view",
-      description : "show grid view"
-    });
-  }
+  // this was just experimental grid stuff
+//  if (search == "") {
+//    suggestions.push({
+//      content : "_grid_view",
+//      description : "show grid view"
+//    });
+//  }
   findTabs(search, function(tabs) {
     for (tabIndex in tabs) {
       var tabInfo = tabs[tabIndex];
