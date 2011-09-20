@@ -5,5 +5,13 @@
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
   "icons" : {},
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "css": [],
+      "js": ["js/commons.js","js/jquery-1.6.3.min.js", "js/jquery.hotkeys.js","js/content.js"]
+    }
+  ],
   "permissions": ["tabs", "http://*/*","https://*/*","notifications"]
+  
 }
