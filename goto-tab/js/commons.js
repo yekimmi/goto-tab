@@ -1,3 +1,6 @@
+function htmlEncode(toEncode){
+  return $("<div/>").html(toEncode).html();
+}
 function findTabs(search, callback) {
   search = search.toLowerCase();
   chrome.windows.getAll({
