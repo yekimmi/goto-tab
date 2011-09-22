@@ -1,5 +1,9 @@
 function htmlEncode(toEncode){
-  return $("<div/>").html(toEncode).html();
+  var text = $("<div/>").html(toEncode).text();
+  text = text.replace(/</g,"&lt;");
+  text = text.replace(/>/g,"&gt;");
+  console.log(text);
+  return text;
 }
 function findTabs(search, callback) {
   search = search.toLowerCase();
