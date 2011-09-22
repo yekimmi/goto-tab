@@ -2,6 +2,7 @@ function htmlEncode(toEncode){
   var text = $("<div/>").html(toEncode).text();
   text = text.replace(/</g,"&lt;");
   text = text.replace(/>/g,"&gt;");
+  text = text.replace(/&/g,"&amp;");
   console.log(text);
   return text;
 }
