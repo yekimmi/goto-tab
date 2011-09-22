@@ -1,7 +1,7 @@
 {
   "name": "goto tab",
   "version": "0.1",
-  "description": "goto tab",
+  "description": "Tab extension to quickly go between tabs via the omnibox!",
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
   "icons" : {"16" : "image/goto_tab_icon16x16.png","128":"image/goto_tab_icon128x128.png"},
