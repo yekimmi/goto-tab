@@ -96,10 +96,10 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
       var findIndex = tabInfo.index;
       suggestions.push({
         content : tab.id + "",
-        description : "<dim>" + htmlEncode(tab.title.substring(0, findIndex))
+        description : "<dim>" + encodeSpecial(tab.title.substring(0, findIndex))
             + "</dim><match>"
-            + htmlEncode(tab.title.substring(findIndex, findIndex + search.length))
-            + "</match><dim>" + htmlEncode(tab.title.substring(findIndex + search.length))
+            + encodeSpecial(tab.title.substring(findIndex, findIndex + search.length))
+            + "</match><dim>" + encodeSpecial(tab.title.substring(findIndex + search.length))
             + "</dim>"
       });
     }
