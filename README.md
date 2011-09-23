@@ -3,6 +3,10 @@ This is a chrome extension that uses the omnibox to navigate between tabs.
 
 Releases:
 
+v1.0.2
+
+* Removed permissions for data
+
 v1.0.1
 
 * Fix for suggestion break when a page title has "<","&", or ">" : https://github.com/mikeyfujihara/goto-tab/issues/5 
