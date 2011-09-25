@@ -35,21 +35,17 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   // });
   // return;
   // }
-  var id = null;
+  
   if (text == "-" || text == "-last") {
     // go to last if exists
-    id = MANAGER.history.getLastViewed();
-  } else {
-    id = parseInt(text);
-  }
-  if (id != null && !isNaN(id)) {
-    chrome.tabs.update(id, {
+    chrome.tabs.update(MANAGER.history.getLastViewed().id, {
       selected : true
     });
   } else {
     MANAGER.history.findTabs(text, function(tabs) {
       if (tabs.length > 0) {
         var tabInfo = tabs[0];
+        console.log("tabInfo id " + tabInfo.tab.id);
         chrome.tabs.update(tabInfo.tab.id, {
           selected : true
         });
@@ -79,7 +75,7 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
       var tab = tabInfo.tab;
       var findIndex = tabInfo.index;
       suggestions.push({
-        content : tab.id + "",
+        content : tab.searchable,
         description : "<dim>"
             + encodeSpecial(tab.title.substring(0, findIndex))
             + "</dim><match>"

@@ -79,6 +79,7 @@ function LinkedList() {
 function Tab(id, title) {
   this.id = id;
   this.title = (!title) ? "" : title;
+  this.searchable = this.title.toLowerCase() + ":" + this.id;
 }
 function TabHistory() {
   this.history = new LinkedList();
@@ -95,13 +96,13 @@ function TabHistory() {
   };
   this.createdCallback = function(tab) {
     var strId = "" + tab.id;
-    this.tabs[strId] = new Tab(strId);
+    this.tabs[strId] = new Tab(tab.id);
     this.history.unshift(tab.id);
   };
   this.updatedCallback = function(tabId, changeInfo, tab) {
     if (tab.title != undefined) {
       var strId = "" + tabId;
-      this.tabs[strId].title = tab.title;
+      this.tabs[strId] = new Tab(tabId, tab.title);
     }
   };
   this.removeCallback = function(tabId, removeInfo) {
@@ -114,7 +115,8 @@ function TabHistory() {
     return this.history.first != null && this.history.first.next != null;
   };
   this.getLastViewed = function() {
-    return this.history.first.next.obj;
+    var strId = this.history.first.next.obj + "";
+    return this.tabs[strId];
   };
   this.findTabs = function(search, callback) {
     search = search.toLowerCase();
@@ -123,12 +125,12 @@ function TabHistory() {
     this.history.forEach(function(tabId) {
       var strId = "" + tabId;
       var tab = self.tabs[strId];
-      var title = tab.title.toLowerCase();
-      var findIndex = title.indexOf(search);
+      var findIndex = tab.searchable.indexOf(search);
       if (findIndex != -1) {
         tabs.push({
           tab : tab,
-          index : findIndex
+          index : findIndex,
+          searchable : tab.searchable
         });
       }
     });
