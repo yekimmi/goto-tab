@@ -1,3 +1,29 @@
+var MANAGER = new TabManager();
+// initialize the callbacks
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  MANAGER.history.removeCallback(tabId, removeInfo);
+});
+chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+  MANAGER.history.changeCallback(tabId, selectInfo);
+});
+chrome.tabs.onCreated.addListener(function(tab) {
+  MANAGER.history.createdCallback(tab);
+});
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  MANAGER.history.updatedCallback(tabId, changeInfo, tab);
+});
+// initialize the history
+chrome.windows.getAll({
+  populate : true
+}, function(windows) {
+  for (index in windows) {
+    var window = windows[index];
+    for (tabIndex in window.tabs) {
+      var tab = window.tabs[tabIndex];
+      MANAGER.history.add(tab.id, tab.title);
+    }
+  }
+});
 chrome.omnibox.onInputEntered.addListener(function(text) {
   text = text.trim();
   // show page list
@@ -12,7 +38,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   var id = null;
   if (text == "-" || text == "-last") {
     // go to last if exists
-    id = MANAGER.history.getLast();
+    id = MANAGER.history.getLastViewed();
   } else {
     id = parseInt(text);
   }
@@ -21,7 +47,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
       selected : true
     });
   } else {
-    findTabs(text, function(tabs) {
+    MANAGER.history.findTabs(text, function(tabs) {
       if (tabs.length == 1) {
         var tabInfo = tabs[0];
         chrome.tabs.update(tabInfo.tab.id, {
@@ -34,7 +60,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
 chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
   var suggestions = [];
   search = search.trim();
-  if (search == "-" && MANAGER.history.hasLast()) {
+  if (search == "-" && MANAGER.history.hasLastViewed()) {
     suggestions.push({
       content : "-last",
       description : "last viewed tab"
@@ -47,7 +73,7 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
   // description : "show grid view"
   // });
   // }
-  findTabs(search, function(tabs) {
+  MANAGER.history.findTabs(search, function(tabs) {
     for (tabIndex in tabs) {
       var tabInfo = tabs[tabIndex];
       var tab = tabInfo.tab;
