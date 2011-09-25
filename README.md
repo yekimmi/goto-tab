@@ -3,6 +3,11 @@ This is a chrome extension that uses the omnibox to navigate between tabs.
 
 Releases:
 
+v1.0.3
+
+* Suggestions are now ordered by last viewed
+* The tab the user is moved to is the top suggestion for the given search
+
 v1.0.2
 
 * Removed permissions for data
