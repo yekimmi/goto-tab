@@ -48,7 +48,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
     });
   } else {
     MANAGER.history.findTabs(text, function(tabs) {
-      if (tabs.length == 1) {
+      if (tabs.length > 0) {
         var tabInfo = tabs[0];
         chrome.tabs.update(tabInfo.tab.id, {
           selected : true
