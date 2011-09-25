@@ -45,7 +45,6 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
     MANAGER.history.findTabs(text, function(tabs) {
       if (tabs.length > 0) {
         var tabInfo = tabs[0];
-        console.log("tabInfo id " + tabInfo.tab.id);
         chrome.tabs.update(tabInfo.tab.id, {
           selected : true
         });

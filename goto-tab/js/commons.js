@@ -59,6 +59,12 @@ function LinkedList() {
         if (item.next != null) {
           item.next.last = item.last;
         }
+        if (this.first.obj == obj) {
+          this.first = this.first.next;
+        }
+        if (this.last.obj == obj) {
+          this.last = this.last.last;
+        }
         this.unshift(obj);
         break;
       }
