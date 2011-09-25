@@ -20,7 +20,6 @@ function LinkedList() {
   this.unshift = function(obj) {
     var item = new LinkedItem(obj);
     if (this.first == null) {
-      console.log("set first/last");
       this.first = item;
       this.last = this.first;
     } else {
@@ -28,28 +27,21 @@ function LinkedList() {
       item.next = this.first;
       this.first = item;
     }
-    console.log(this.first);
   };
   this.remove = function(obj) {
-    console.log("remove < " + obj + " >");
     var item = this.first;
     while (item != null) {
       if (item.obj == obj) {
-        console.log("found");
         if (item.last != null) {
-          console.log("flip last");
           item.last.next = item.next;
         }
         if (item.next != null) {
-          console.log("flip next");
           item.next.last = item.last;
         }
         if (this.first.obj == obj) {
-          console.log("next first");
           this.first = this.first.next;
         }
         if (this.last.obj == obj) {
-          console.log("last last");
           this.last = this.last.last;
         }
         break;
@@ -58,8 +50,6 @@ function LinkedList() {
     }
   };
   this.moveToFront = function(obj) {
-    console.log("move to front < " + obj + " >");
-    console.log("first < " + this.first.obj + " >");
     var item = this.first;
     while (item != null) {
       if (item.obj == obj) {
@@ -94,7 +84,6 @@ function TabHistory() {
   this.history = new LinkedList();
   this.tabs = {};
   this.add = function(id, title) {
-    console.log("add < " + id + ", " + title + " >");
     var strId = "" + id;
     this.tabs[strId] = new Tab(id, title);
     this.history.unshift(id);
@@ -131,13 +120,10 @@ function TabHistory() {
     search = search.toLowerCase();
     var tabs = [];
     var self = this;
-    console.log("start find");
     this.history.forEach(function(tabId) {
-      console.log("tab id < " + tabId + " >");
       var strId = "" + tabId;
       var tab = self.tabs[strId];
       var title = tab.title.toLowerCase();
-      console.log("check < " + tab.title + " >");
       var findIndex = title.indexOf(search);
       if (findIndex != -1) {
         tabs.push({
@@ -146,7 +132,6 @@ function TabHistory() {
         });
       }
     });
-    console.log("end find");
     callback(tabs);
   }
 };
