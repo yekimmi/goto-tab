@@ -103,7 +103,7 @@ function TabHistory() {
   this.createdCallback = function(tab) {
     var strId = "" + tab.id;
     this.tabs[strId] = new Tab(tab.id);
-    this.history.unshift(tab.id);
+    this.history.push(tab.id);
   };
   this.updatedCallback = function(tabId, changeInfo, tab) {
     if (tab.title != undefined) {
