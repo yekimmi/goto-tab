@@ -5,6 +5,6 @@
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
   "icons" : {"16" : "image/goto_tab_icon16x16.png","128":"image/goto_tab_icon128x128.png"},
-  "permissions": ["tabs","notifications"]
+  "permissions": ["tabs","notifications","https://*/*","http://*/*"]
   
 }

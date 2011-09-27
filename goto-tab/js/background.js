@@ -29,7 +29,7 @@ chrome.windows.getAll({
     var window = windows[index];
     for (tabIndex in window.tabs) {
       var tab = window.tabs[tabIndex];
-      MANAGER.history.add(tab.id, tab.title);
+      MANAGER.history.add(tab.id, tab.title,tab.favIconUrl);
     }
   }
 });
@@ -95,4 +95,19 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
     }
     suggest(suggestions);
   });
+});
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  if (request.method == GET_HISTORY) {
+    var history = [];
+    MANAGER.history.history.forEach(function(id){
+      var info = {};
+      info['id'] = id;
+      info['info'] = MANAGER.history.tabs["" + id];
+      history.push(info);
+    });
+    sendResponse(history);
+  } else {
+    sendResponse({}); // snub them.
+  }
 });

@@ -1,3 +1,5 @@
+var GET_HISTORY = "getHistory";
+
 function LinkedItem(obj) {
   this.obj = obj;
   this.next = null;
@@ -82,17 +84,20 @@ function LinkedList() {
     }
   }
 }
-function Tab(id, title) {
+function Tab(id, title, imgUrl, icon) {
   this.id = id;
   this.title = (!title) ? "" : title;
+  this.img = (!imgUrl) ? "" : imgUrl;
   this.searchable = this.title.toLowerCase() + ":" + this.id;
+  this.icon = (!icon) ? "" : icon;
+  console.log(icon);
 }
 function TabHistory() {
   this.history = new LinkedList();
   this.tabs = {};
-  this.add = function(id, title) {
+  this.add = function(id, title, icon) {
     var strId = "" + id;
-    this.tabs[strId] = new Tab(id, title);
+    this.tabs[strId] = new Tab(id, title, undefined, icon);
     this.history.unshift(id);
   };
   this.startCallback = function() {
@@ -106,7 +111,8 @@ function TabHistory() {
         for (tabIndex in window.tabs) {
           var tab = window.tabs[tabIndex];
           var strId = "" + tab.id;
-          self.tabs[strId] = new Tab(tab.id, tab.title);
+          var old = self.tabs[strId];
+          self.tabs[strId] = new Tab(tab.id, tab.title, tab.img, tab.icon);
         }
       }
     });
@@ -124,7 +130,8 @@ function TabHistory() {
   this.updatedCallback = function(tabId, changeInfo, tab) {
     if (tab.title != undefined) {
       var strId = "" + tabId;
-      this.tabs[strId] = new Tab(tabId, tab.title);
+      var old = this.tabs[strId];
+      this.tabs[strId] = new Tab(tabId, tab.title, old.img, tab.favIconUrl);
     }
   };
   this.removeCallback = function(tabId, removeInfo) {
@@ -132,6 +139,17 @@ function TabHistory() {
   };
   this.changeCallback = function(tabId, selectInfo) {
     this.history.moveToFront(tabId);
+    var self = this;
+    chrome.tabs.getSelected(null, function(tab) {
+      if (tab.url.indexOf("http") == 0) {
+        chrome.tabs.captureVisibleTab(null, function(dataUrl) {
+          var strId = "" + tabId;
+          var tabInfo = self.tabs[strId];
+          console.log(tab);
+          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, dataUrl, tab.favIconUrl);
+        });
+      }
+    });
   };
   this.windowChangeCallback = function(windowId) {
     if (windowId == chrome.windows.WINDOW_ID_NONE) {
@@ -139,6 +157,12 @@ function TabHistory() {
     }
     var self = this;
     chrome.tabs.getSelected(windowId, function(tab) {
+      if (tab.url.indexOf("http") == 0) {
+        chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
+          var strId = "" + tab.id;
+          self.tabs[strId] = new Tab(tab.id, tab.title, dataUrl, tab.faviconUrl);
+        });
+      }
       self.history.moveToFront(tab.id);
     });
   };

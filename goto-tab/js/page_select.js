@@ -38,7 +38,6 @@ function SelectionNav(items, selected) {
     for (yIndex in this.yItems) {
       var yItem = this.yItems[yIndex];
       yItem.yIndex = parseInt(yIndex);
-      console.log("? " + yItem.item.position().top);
     }
     // this.updateSelected(this.selected);
   };
@@ -181,66 +180,66 @@ function SelectionNav(items, selected) {
   this.updateSelected(selected);
 };
 $(function() {
-  chrome.tabs.getCurrent(function(current) {
-    var container = $(".grid");
-    container.masonry({
-      // options
-      itemSelector : '.grid_element',
-      columnWidth : 100,
-      isAnimated : false,
-      isFitWidth : true
-    });
-    chrome.windows.getAll({
-      populate : true
-    }, function(windows) {
-      var items = [];
-      var selected = {};
-      var first = true;
-      for (index in windows) {
-        var window = windows[index];
-        for (tabIndex in window.tabs) {
-          var tab = window.tabs[tabIndex];
-          if (tab.id == current.id) {
-            continue;
-          }
-          var box = $('<div class="grid_element"><p>' + tab.title
-              + '</p></div>');
-          var item = new SelectItem(box, tab.id);
-          items.push(item);
-          container.append(box).masonry("appended", box);
-          if (first) {
-            selected = item;
-            first = false;
-          }
-        }
-      }
-      if (items.length == 0) {
-        return;
-      }
-      var nav = new SelectionNav(items, items[0]);
-      $(win).resize(function() {
-        container.masonry("layout", [], function() {
-          nav.updateSorts();
-        });
-      });
-      container.masonry("layout", [], function() {
-        $(document).bind('keydown', 'k', function() {
-          nav.moveUp();
-        });
-        $(document).bind('keydown', 'j', function() {
-          nav.moveDown();
-        });
-        $(document).bind('keydown', 'h', function() {
-          nav.moveLeft();
-        });
-        $(document).bind('keydown', 'l', function() {
-          nav.moveRight();
-        });
-        $(document).bind("keydown", 'return', function() {
-          nav.selected.goTo();
-          chrome.tabs.remove(current.id);
-        });
-      });
-    });
-  });
+  chrome.extension
+      .sendRequest(
+          {
+            method : GET_HISTORY
+          },
+          function(history) {
+            var items = [];
+            var selected = {};
+            var first = true;
+            var container = $(".grid");
+            container.masonry({
+              // options
+              itemSelector : '.grid_element',
+              columnWidth : 100,
+              isAnimated : false,
+              isFitWidth : true
+            });
+            for ( var index in history) {
+              var item = history[index];
+              console.log(item.info);
+              var box = $('<div class="grid_element"><div><table><tr><td><img src="' + item.info.icon + '"/><span style="font-size:12px;padding:10px"></td><td>'
+                  + item.info.title
+                  + '</td></tr></table></div><div><img style="height:300px" src="'
+                  + item.info.img + '"/></div></div>');
+              var item = new SelectItem(box, item.info.id);
+              items.push(item);
+              container.append(box).masonry("appended", box);
+              if (first) {
+                selected = item;
+                first = false;
+              }
+            }
+            if (items.length == 0) {
+              return;
+            }
+            var nav = new SelectionNav(items, items[0]);
+            $(win).resize(function() {
+              container.masonry("layout", [], function() {
+                nav.updateSorts();
+              });
+            });
+            container.masonry("layout", [], function() {
+              $(document).bind('keydown', 'k', function() {
+                nav.moveUp();
+              });
+              $(document).bind('keydown', 'j', function() {
+                nav.moveDown();
+              });
+              $(document).bind('keydown', 'h', function() {
+                nav.moveLeft();
+              });
+              $(document).bind('keydown', 'l', function() {
+                nav.moveRight();
+              });
+              $(document).bind("keydown", 'return', function() {
+                chrome.tabs.getSelected(null, function(current) {
+                  nav.selected.goTo();
+                  chrome.tabs.remove(current.id);
+                });
+              });
+            });
+          });
 });
