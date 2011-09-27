@@ -18,6 +18,9 @@ chrome.tabs.onCreated.addListener(function(tab) {
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   MANAGER.history.updatedCallback(tabId, changeInfo, tab);
 });
+chrome.omnibox.onInputStarted.addListener(function() {
+  MANAGER.history.startCallback();
+});
 // initialize the history
 chrome.windows.getAll({
   populate : true
@@ -41,7 +44,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   // });
   // return;
   // }
-  
+
   if (text == "-" || text == "-last") {
     // go to last if exists
     chrome.tabs.update(MANAGER.history.getLastViewed().id, {

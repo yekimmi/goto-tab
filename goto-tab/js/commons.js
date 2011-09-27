@@ -95,6 +95,22 @@ function TabHistory() {
     this.tabs[strId] = new Tab(id, title);
     this.history.unshift(id);
   };
+  this.startCallback = function() {
+    var self = this;
+    chrome.windows.getAll({
+      populate : true
+    }, function(windows) {
+      var tabs = [];
+      for (index in windows) {
+        var window = windows[index];
+        for (tabIndex in window.tabs) {
+          var tab = window.tabs[tabIndex];
+          var strId = "" + tab.id;
+          self.tabs[strId] = new Tab(tab.id, tab.title);
+        }
+      }
+    });
+  };
   this.remove = function(id) {
     this.history.remove(id);
     var strId = "" + id;
@@ -118,7 +134,7 @@ function TabHistory() {
     this.history.moveToFront(tabId);
   };
   this.windowChangeCallback = function(windowId) {
-    if (windowId == chrome.windows.WINDOW_ID_NONE){
+    if (windowId == chrome.windows.WINDOW_ID_NONE) {
       return;
     }
     var self = this;
