@@ -3,6 +3,11 @@ This is a chrome extension that uses the omnibox to navigate between tabs.
 
 Releases:
 
+v1.0.4
+
+* Fixed issue with title not being updated for suggestions
+* Fixed issue with manual window change not updating history
+
 v1.0.3
 
 * Suggestions are now ordered by last viewed

@@ -1,6 +1,6 @@
 {
   "name": "goto tab",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Tab extension to quickly go between tabs via the omnibox!",
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
