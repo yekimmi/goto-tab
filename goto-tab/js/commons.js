@@ -117,6 +117,15 @@ function TabHistory() {
   this.changeCallback = function(tabId, selectInfo) {
     this.history.moveToFront(tabId);
   };
+  this.windowChangeCallback = function(windowId) {
+    if (windowId == chrome.windows.WINDOW_ID_NONE){
+      return;
+    }
+    var self = this;
+    chrome.tabs.getSelected(windowId, function(tab) {
+      self.history.moveToFront(tab.id);
+    });
+  };
   this.hasLastViewed = function() {
     return this.history.first != null && this.history.first.next != null;
   };

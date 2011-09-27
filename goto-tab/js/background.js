@@ -4,7 +4,13 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
   MANAGER.history.removeCallback(tabId, removeInfo);
 });
 chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+  // bug this thing doesnt fire across all tabs
+  // so have to add a window focus change listener
+  // to handle the cross window tab change
   MANAGER.history.changeCallback(tabId, selectInfo);
+});
+chrome.windows.onFocusChanged.addListener(function(windowId) {
+  MANAGER.history.windowChangeCallback(windowId);
 });
 chrome.tabs.onCreated.addListener(function(tab) {
   MANAGER.history.createdCallback(tab);
