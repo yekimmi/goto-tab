@@ -233,11 +233,34 @@ function TabManager() {
   this.removeCallback = function(tabId, removeInfo) {
     this.history.removeCallback(tabId, removeInfo);
   }
-  this.stopCallback = function() {
+  this.stopCallback = function(callback) {
+    if (!callback) {
+      callback = function() {
+      };
+    }
     chrome.tabs.executeScript(null, {
       "code" : "stop();"
-    });
+    }, callback);
   };
+  this.getLastViewed = function() {
+    return this.history.getLastViewed();
+  };
+  this.hasLastViewed = function(){
+    return this.history.hasLastViewed();
+  };
+  this.goTo = function(text) {
+    var self = this;
+    this.stopCallback(function() {
+      self.updateSuggestions(text, function(tabs) {
+        if (tabs.length > 0) {
+          var tabInfo = tabs[0];
+          chrome.tabs.update(tabInfo.tab.id, {
+            selected : true
+          });
+        }
+      });
+    });
+  }
   this.updateSuggestions = function(search, callback) {
     this.history.findTabs(search, function(tabs) {
       callback(tabs);

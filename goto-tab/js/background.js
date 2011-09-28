@@ -50,18 +50,9 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
 
   if (text == "-" || text == "-last") {
     // go to last if exists
-    chrome.tabs.update(MANAGER.history.getLastViewed().id, {
-      selected : true
-    });
+    MANAGER.goTo(MANAGER.getLastViewed().searchable);
   } else {
-    MANAGER.updateSuggestions(text, function(tabs) {
-      if (tabs.length > 0) {
-        var tabInfo = tabs[0];
-        chrome.tabs.update(tabInfo.tab.id, {
-          selected : true
-        });
-      }
-    });
+    MANAGER.goTo(text);
   }
 });
 chrome.omnibox.onInputChanged.addListener(function(search, suggest) {

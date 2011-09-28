@@ -8,6 +8,24 @@
 }
 
 #gt_choices {
+  
+}
+
+.gt_table {
+  margin: 0px;
+  padding: 0px;
+  background-color: white;
+  color: black;
+}
+
+.gt_td {
+  padding: 0px;
+  margin: 0px;
+}
+
+.gt_tr {
+  padding: 0px;
+  margin: 0px;
 }
 
 .gt_choice {
@@ -19,4 +37,5 @@
   overflow-y: hidden;
   margin-bottom: 5px;
   background-color: white;
+  color: black;
 }

@@ -5,6 +5,7 @@ var SHOW_CONTENT = "showContent";
 var HIDE_CONTENT = "hideContent";
 var UPDATE_SUGGESTIONS = "updateSuggestions";
 var enders = [];
+var started = false;
 var animation = {
   time : new Date()
 };
@@ -20,8 +21,8 @@ var animate = function() {
   if (enders.length > 0) {
     var next = enders.pop();
     if (SHOW_CONTENT == next.type) {
+      started = true;
       setTimeout(animate, 30);
-      // });
     } else if (HIDE_CONTENT == next.type) {
       console.log("hide");
       main.hide("slide", {
@@ -29,10 +30,11 @@ var animate = function() {
       }, function() {
         main.css("opacity", 0);
         main.show(); // make sure its ready to be layed out
+        started = false;
         setTimeout(animate, 30);
       });
     }
-  } else if (lastAnimation.time.getTime() < animation.time.getTime()) {
+  } else if (lastAnimation.time.getTime() < animation.time.getTime() && started) {
     // first get it
     lastAnimation = animation;
     console.log("do " + lastAnimation.time.getTime());
@@ -102,9 +104,9 @@ var run = function() {
 var createBox = function(tab) {
   return $('<div class="gt_choice" data-id="gt_tab_'
       + tab.id
-      + '"><div><table><tr><td><img src="'
+      + '"><div><table class="gt_table"><tr class="gt_td"><td class="gt_td"><img src="'
       + tab.icon
-      + '"/></td><td><div style="overflow:hidden;white-space:nowrap;font-size:12px;padding:10px;color:black">'
+      + '"/></td><td class="gt_td"><div style="overflow:hidden;white-space:nowrap;font-size:12px;padding:10px;color:black;">'
       + tab.title + '</div></td></tr></table></div><div><img src="' + tab.img
       + '"/></div></div>');
 };
