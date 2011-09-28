@@ -185,7 +185,11 @@ $(function() {
           {
             method : GET_HISTORY
           },
-          function(history) {
+          function(result) {
+            if (result.type == undefined || result.type == ERROR){
+              return;
+            }
+            var history = result.data;
             var items = [];
             var selected = {};
             var first = true;

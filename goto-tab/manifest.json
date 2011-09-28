@@ -5,6 +5,13 @@
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
   "icons" : {"16" : "image/goto_tab_icon16x16.png","128":"image/goto_tab_icon128x128.png"},
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "css": ["style/content.css"],
+      "js": ["js/commons.js","js/jquery-1.6.3.min.js", "js/jquery.hotkeys.js","js/jquery-ui-1.8.16.custom.min.js","js/jquery.quicksand.js","js/content.js"]
+    }
+  ],
   "permissions": ["tabs","notifications","https://*/*","http://*/*"]
   
 }

@@ -1,4 +1,22 @@
-body {
-  font-family: 'Architects Daughter', arial, serif;
-  font-family: 14px;
+#gt_main {
+  position: fixed;
+  top: 100px;
+  left: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  z-index: 99999999;
+}
+
+#gt_choices {
+}
+
+.gt_choice {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  /* float: left; */
+  overflow-x: hidden;
+  overflow-y: hidden;
+  margin-bottom: 5px;
+  background-color: white;
 }

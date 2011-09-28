@@ -1,4 +1,7 @@
 var GET_HISTORY = "getHistory";
+var GET_SUGGESTIONS = "getSuggestions";
+var SUCCESS = "success";
+var ERROR = "error";
 
 function LinkedItem(obj) {
   this.obj = obj;
@@ -90,11 +93,11 @@ function Tab(id, title, imgUrl, icon) {
   this.img = (!imgUrl) ? "" : imgUrl;
   this.searchable = this.title.toLowerCase() + ":" + this.id;
   this.icon = (!icon) ? "" : icon;
-  console.log(icon);
 }
 function TabHistory() {
   this.history = new LinkedList();
   this.tabs = {};
+  this.lastSuggestions = [];
   this.add = function(id, title, icon) {
     var strId = "" + id;
     this.tabs[strId] = new Tab(id, title, undefined, icon);
@@ -104,18 +107,20 @@ function TabHistory() {
     var self = this;
     chrome.windows.getAll({
       populate : true
-    }, function(windows) {
-      var tabs = [];
-      for (index in windows) {
-        var window = windows[index];
-        for (tabIndex in window.tabs) {
-          var tab = window.tabs[tabIndex];
-          var strId = "" + tab.id;
-          var old = self.tabs[strId];
-          self.tabs[strId] = new Tab(tab.id, tab.title, tab.img, tab.icon);
-        }
-      }
-    });
+    },
+        function(windows) {
+          var tabs = [];
+          for (index in windows) {
+            var window = windows[index];
+            for (tabIndex in window.tabs) {
+              var tab = window.tabs[tabIndex];
+              var strId = "" + tab.id;
+              var old = self.tabs[strId];
+              self.tabs[strId] = new Tab(tab.id, tab.title, old.img,
+                  tab.favIconUrl);
+            }
+          }
+        });
   };
   this.remove = function(id) {
     this.history.remove(id);
@@ -145,8 +150,8 @@ function TabHistory() {
         chrome.tabs.captureVisibleTab(null, function(dataUrl) {
           var strId = "" + tabId;
           var tabInfo = self.tabs[strId];
-          console.log(tab);
-          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, dataUrl, tab.favIconUrl);
+          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, dataUrl,
+              tab.favIconUrl);
         });
       }
     });
@@ -158,10 +163,12 @@ function TabHistory() {
     var self = this;
     chrome.tabs.getSelected(windowId, function(tab) {
       if (tab.url.indexOf("http") == 0) {
-        chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
-          var strId = "" + tab.id;
-          self.tabs[strId] = new Tab(tab.id, tab.title, dataUrl, tab.faviconUrl);
-        });
+        chrome.tabs.captureVisibleTab(null, null,
+            function(dataUrl) {
+              var strId = "" + tab.id;
+              self.tabs[strId] = new Tab(tab.id, tab.title, dataUrl,
+                  tab.favIconUrl);
+            });
       }
       self.history.moveToFront(tab.id);
     });
@@ -172,6 +179,16 @@ function TabHistory() {
   this.getLastViewed = function() {
     var strId = this.history.first.next.obj + "";
     return this.tabs[strId];
+  };
+  this.getHistory = function() {
+    var tabs = [];
+    var self = this;
+    this.history.forEach(function(tabId) {
+      var strId = "" + tabId;
+      var tab = self.tabs[strId];
+      tabs.push(tab);
+    });
+    return tabs;
   };
   this.findTabs = function(search, callback) {
     search = search.toLowerCase();
@@ -189,11 +206,52 @@ function TabHistory() {
         });
       }
     });
+    this.lastSuggestions = tabs;
     callback(tabs);
   }
 };
 function TabManager() {
   this.history = new TabHistory();
+  this.startCallback = function() {
+    this.history.startCallback();
+    chrome.tabs.executeScript(null, {
+      "code" : "run();"
+    });
+  };
+  this.updatedCallback = function(tabId, changeInfo, tab) {
+    this.history.updatedCallback(tabId, changeInfo, tab);
+  };
+  this.createdCallback = function(tab) {
+    this.history.createdCallback(tab);
+  };
+  this.windowChangeCallback = function(windowId) {
+    this.history.windowChangeCallback(windowId);
+  };
+  this.changeCallback = function(tabId, selectInfo) {
+    this.history.changeCallback(tabId, selectInfo);
+  }
+  this.removeCallback = function(tabId, removeInfo) {
+    this.history.removeCallback(tabId, removeInfo);
+  }
+  this.stopCallback = function() {
+    chrome.tabs.executeScript(null, {
+      "code" : "stop();"
+    });
+  };
+  this.updateSuggestions = function(search, callback) {
+    this.history.findTabs(search, function(tabs) {
+      callback(tabs);
+    });
+    chrome.tabs.executeScript(null, {
+      "code" : "update();"
+    });
+  };
+  this.getHistory = function() {
+    return this.history.getHistory();
+  };
+  this.getLastSuggestions = function() {
+    return this.history.lastSuggestions;
+  };
 };
 function encodeSpecial(toEncode) {
   var text = toEncode;
