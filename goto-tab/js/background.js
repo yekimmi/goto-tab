@@ -32,7 +32,7 @@ chrome.windows.getAll({
     var window = windows[index];
     for (tabIndex in window.tabs) {
       var tab = window.tabs[tabIndex];
-      MANAGER.history.add(tab.id, tab.title, tab.favIconUrl);
+      MANAGER.history.add(tab.id, tab.title, tab.url, tab.favIconUrl);
     }
   }
 });
@@ -76,16 +76,18 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
       var tabInfo = tabs[tabIndex];
       var tab = tabInfo.tab;
       var findIndex = tabInfo.index;
-      suggestions.push({
-        content : tab.searchable,
-        description : "<dim>"
-            + encodeSpecial(tab.title.substring(0, findIndex))
-            + "</dim><match>"
-            + encodeSpecial(tab.title.substring(findIndex, findIndex
-                + search.length)) + "</match><dim>"
-            + encodeSpecial(tab.title.substring(findIndex + search.length))
-            + "</dim>"
-      });
+      suggestions
+          .push({
+            content : tab.searchable,
+            description : "<dim>"
+                + encodeSpecial(tab.searchable.substring(0, findIndex))
+                + "</dim><match>"
+                + encodeSpecial(tab.searchable.substring(findIndex, findIndex
+                    + search.length))
+                + "</match><dim>"
+                + encodeSpecial(tab.searchable.substring(findIndex
+                    + search.length)) + "</dim>"
+          });
     }
     suggest(suggestions);
   });

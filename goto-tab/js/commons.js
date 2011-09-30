@@ -87,40 +87,40 @@ function LinkedList() {
     }
   }
 }
-function Tab(id, title, imgUrl, icon) {
+
+function Tab(id, title, url, imgUrl, icon) {
   this.id = id;
   this.title = (!title) ? "" : title;
+  this.url = url;
+  this.searchable = this.title + ":" + this.url + ":" + this.id;
   this.img = (!imgUrl) ? "" : imgUrl;
-  this.searchable = this.title.toLowerCase() + ":" + this.id;
   this.icon = (!icon) ? "" : icon;
 }
 function TabHistory() {
   this.history = new LinkedList();
   this.tabs = {};
   this.lastSuggestions = [];
-  this.add = function(id, title, icon) {
+  this.add = function(id, title, url, icon) {
     var strId = "" + id;
-    this.tabs[strId] = new Tab(id, title, undefined, icon);
+    this.tabs[strId] = new Tab(id, title, url, undefined, icon);
     this.history.unshift(id);
   };
   this.startCallback = function() {
     var self = this;
     chrome.windows.getAll({
       populate : true
-    },
-        function(windows) {
-          var tabs = [];
-          for (index in windows) {
-            var window = windows[index];
-            for (tabIndex in window.tabs) {
-              var tab = window.tabs[tabIndex];
-              var strId = "" + tab.id;
-              var old = self.tabs[strId];
-              self.tabs[strId] = new Tab(tab.id, tab.title, old.img,
-                  tab.favIconUrl);
-            }
-          }
-        });
+    }, function(windows) {
+      var tabs = [];
+      for (index in windows) {
+        var window = windows[index];
+        for (tabIndex in window.tabs) {
+          var tab = window.tabs[tabIndex];
+          var strId = "" + tab.id;
+          self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, old.img,
+              tab.favIconUrl);
+        }
+      }
+    });
   };
   this.remove = function(id) {
     this.history.remove(id);
@@ -129,14 +129,15 @@ function TabHistory() {
   };
   this.createdCallback = function(tab) {
     var strId = "" + tab.id;
-    this.tabs[strId] = new Tab(tab.id);
+    this.tabs[strId] = new Tab(tab.id, tab.title, tab.url);
     this.history.push(tab.id);
   };
   this.updatedCallback = function(tabId, changeInfo, tab) {
     if (tab.title != undefined) {
       var strId = "" + tabId;
       var old = this.tabs[strId];
-      this.tabs[strId] = new Tab(tabId, tab.title, old.img, tab.favIconUrl);
+      this.tabs[strId] = new Tab(tabId, tab.title, tab.url, old.img,
+          tab.favIconUrl);
     }
   };
   this.removeCallback = function(tabId, removeInfo) {
@@ -150,8 +151,8 @@ function TabHistory() {
         chrome.tabs.captureVisibleTab(null, function(dataUrl) {
           var strId = "" + tabId;
           var tabInfo = self.tabs[strId];
-          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, dataUrl,
-              tab.favIconUrl);
+          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, tabInfo.url,
+              dataUrl, tab.favIconUrl);
         });
       }
     });
@@ -163,12 +164,11 @@ function TabHistory() {
     var self = this;
     chrome.tabs.getSelected(windowId, function(tab) {
       if (tab.url.indexOf("http") == 0) {
-        chrome.tabs.captureVisibleTab(null, null,
-            function(dataUrl) {
-              var strId = "" + tab.id;
-              self.tabs[strId] = new Tab(tab.id, tab.title, dataUrl,
-                  tab.favIconUrl);
-            });
+        chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
+          var strId = "" + tab.id;
+          self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl,
+              tab.favIconUrl);
+        });
       }
       self.history.moveToFront(tab.id);
     });
@@ -197,7 +197,7 @@ function TabHistory() {
     this.history.forEach(function(tabId) {
       var strId = "" + tabId;
       var tab = self.tabs[strId];
-      var findIndex = tab.searchable.indexOf(search);
+      var findIndex = tab.searchable.toLowerCase().indexOf(search);
       if (findIndex != -1) {
         tabs.push({
           tab : tab,
@@ -245,7 +245,7 @@ function TabManager() {
   this.getLastViewed = function() {
     return this.history.getLastViewed();
   };
-  this.hasLastViewed = function(){
+  this.hasLastViewed = function() {
     return this.history.hasLastViewed();
   };
   this.goTo = function(text) {
