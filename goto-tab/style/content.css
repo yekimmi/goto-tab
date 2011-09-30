@@ -1,6 +1,16 @@
+#backdrop {
+  background-color: #aaaaaa;
+  z-index: 99999998;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+
 #gt_main {
   position: fixed;
-  top: 100px;
+  top: 150px;
   left: 0px;
   overflow-x: hidden;
   overflow-y: hidden;
@@ -12,8 +22,7 @@
 }
 
 .gt_choice {
-  box-shadow: 5px 5px 2px #888;
-  border: 1px solid black;
+  box-shadow: 5px 5px 10px #888;
   overflow-x: hidden;
   overflow-y: hidden;
   margin-right: 10px;
@@ -28,7 +37,7 @@
 }
 
 .gt_unselected {
-  opacity: .5;
+  opacity: .4;
 }
 
 .gt_all {

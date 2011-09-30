@@ -1,3 +1,4 @@
+var backdrop = $("<div id='backdrop'></div>");
 var main = $("<div id='gt_main'></div>");
 var content = $("<div id='gt_choices'></div>");
 var destination = $("<div id='destination' style='display:none'></div>");
@@ -11,9 +12,10 @@ var animation = {
 };
 var lastAnimation = animation;
 $(function() {
-  $("body").append(main);
+  backdrop.css("opacity", 0);
   main.append(content);
   main.css("opacity", 0);
+  $("body").append(main);
   $("body").append(destination);
   setTimeout(animate, 30);
 });
@@ -24,12 +26,14 @@ var animate = function() {
       started = true;
       setTimeout(animate, 30);
     } else if (HIDE_CONTENT == next.type) {
-      console.log("hide");
+      backdrop.css("opacity", 0);
+      backdrop.remove();
       main.hide("slide", {
         direction : "left"
       }, function() {
         main.css("opacity", 0);
-        main.show(); // make sure its ready to be layed out
+        content.children().remove();
+        main.show();
         started = false;
         setTimeout(animate, 30);
       });
@@ -68,6 +72,8 @@ var animate = function() {
         }, function() {
           main.hide();
           main.css("opacity", 1);
+          $("body").append(backdrop);
+          backdrop.css("opacity", .2);
           main.show("slide", {
             direction : "left"
           }, function() {
