@@ -43,12 +43,23 @@ var animate = function() {
     animationLastTime = new Date();
     if (UPDATE_SUGGESTIONS == next.type) {
       var suggestions = next.data;
+      var suggested = {};
       for ( var index = suggestions.length - 1; index >= 0; index--) {
         var sug = suggestions[index];
         var box = destination.find("div[data-id='gt_tab_" + sug.tab.id + "']");
+        suggested[sug.tab.id + ""] = true;
+        box.attr("data-selected", "selected");
+        box.addClass("gt_selected");
         destination.prepend(box);
       }
-      console.log("qs");
+      $("div[data-id]").each(function(index) {
+        var ob = $(this);
+        console.log("remove < " + !suggested[ob.attr("data-tab-id") + ""]);
+        if (!suggested[ob.attr("data-tab-id")]) {
+          ob.removeAttr("data-selected");
+          ob.removeClass("gt_selected");
+        }
+      });
       if (main.css("opacity") == 0) {
         content.quicksand(destination.children(), {
           duration : 1
@@ -58,12 +69,13 @@ var animate = function() {
           main.show("slide", {
             direction : "left"
           }, function() {
-            console.log("show");
             setTimeout(animate, 30);
           });
         });
       } else {
-        content.quicksand(destination.children(), function() {
+        content.quicksand(destination.children(), {
+          duration : 300
+        }, function() {
           setTimeout(animate, 30);
         });
       }
@@ -101,14 +113,48 @@ var run = function() {
     });
   });
 };
-var createBox = function(tab) {
-  return $('<div class="gt_choice" data-id="gt_tab_'
-      + tab.id
-      + '"><div><table class="gt_table"><tr class="gt_td"><td class="gt_td"><img src="'
-      + tab.icon
-      + '"/></td><td class="gt_td"><div style="overflow:hidden;white-space:nowrap;font-size:12px;padding:10px;color:black;">'
-      + tab.title + '</div></td></tr></table></div><div><img src="' + tab.img
-      + '"/></div></div>');
+var createBox = function(tab, selected) {
+  if (!selected) {
+    selected = false;
+  }
+  var hasImg = tab.img != "";
+  var hasIcon = tab.icon != "";
+  if (hasImg && hasIcon) {
+    return $('<div class="gt_choice '
+        + (selected ? "gt_selected" : "gt_all")
+        + '" data-id="gt_tab_'
+        + tab.id
+        + '" data-tab-id="'
+        + tab.id
+        + '"><div><div class="gt_icon"><img src="'
+        + tab.icon
+        + '"/></div><div class="gt_title">'
+        + tab.title
+        + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
+        + tab.img + '"/></div></div>');
+  } else if (hasImg) {
+    return $('<div class="gt_choice '
+        + (selected ? "gt_selected" : "gt_all")
+        + '" data-id="gt_tab_'
+        + tab.id
+        + '" data-tab-id="'
+        + tab.id
+        + '"><div><div class="gt_title">'
+        + tab.title
+        + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
+        + tab.img + '"/></div></div>');
+  } else if (hasIcon) {
+    return $('<div class="gt_choice ' + (selected ? "gt_selected" : "gt_mini")
+        + '" data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
+        + '"><div><div class="gt_icon"><img src="' + tab.icon
+        + '"/></div><div class="gt_title">' + tab.title
+        + '</div><div style="clear:both;width:100%"></div></div></div>');
+  } else {
+    return $('<div class="gt_choice ' + (selected ? "gt_selected" : "gt_mini")
+        + '" data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
+        + '"><div><div class="gt_title">' + tab.title
+        + '</div><div style="clear:both"></div></div></div>');
+  }
 };
 var update = function() {
   chrome.extension.sendRequest({
@@ -129,7 +175,7 @@ var update = function() {
   });
 }
 var stop = function() {
-  enders.unshift({
+   enders.unshift({
     type : HIDE_CONTENT
   });
 };
