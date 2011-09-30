@@ -50,6 +50,7 @@ var animate = function() {
         suggested[sug.tab.id + ""] = true;
         box.attr("data-selected", "selected");
         box.addClass("gt_selected");
+        box.removeClass("gt_unselected");
         destination.prepend(box);
       }
       $("div[data-id]").each(function(index) {
@@ -58,6 +59,7 @@ var animate = function() {
         if (!suggested[ob.attr("data-tab-id")]) {
           ob.removeAttr("data-selected");
           ob.removeClass("gt_selected");
+          ob.addClass("gt_unselected");
         }
       });
       if (main.css("opacity") == 0) {
@@ -120,9 +122,8 @@ var createBox = function(tab, selected) {
   var hasImg = tab.img != "";
   var hasIcon = tab.icon != "";
   if (hasImg && hasIcon) {
-    return $('<div class="gt_choice '
-        + (selected ? "gt_selected" : "gt_all")
-        + '" data-id="gt_tab_'
+    return $('<div class="gt_choice gt_all gt_unselected"'
+        + ' data-id="gt_tab_'
         + tab.id
         + '" data-tab-id="'
         + tab.id
@@ -133,9 +134,8 @@ var createBox = function(tab, selected) {
         + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
         + tab.img + '"/></div></div>');
   } else if (hasImg) {
-    return $('<div class="gt_choice '
-        + (selected ? "gt_selected" : "gt_all")
-        + '" data-id="gt_tab_'
+    return $('<div class="gt_choice gt_all gt_unselected"'
+        + ' data-id="gt_tab_'
         + tab.id
         + '" data-tab-id="'
         + tab.id
@@ -144,14 +144,14 @@ var createBox = function(tab, selected) {
         + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
         + tab.img + '"/></div></div>');
   } else if (hasIcon) {
-    return $('<div class="gt_choice ' + (selected ? "gt_selected" : "gt_mini")
-        + '" data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
+    return $('<div class="gt_choice gt_mini gt_unselected"'
+        + ' data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
         + '"><div><div class="gt_icon"><img src="' + tab.icon
         + '"/></div><div class="gt_title">' + tab.title
         + '</div><div style="clear:both;width:100%"></div></div></div>');
   } else {
-    return $('<div class="gt_choice ' + (selected ? "gt_selected" : "gt_mini")
-        + '" data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
+    return $('<div class="gt_choice gt_mini gt_unselected"'
+        + ' data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
         + '"><div><div class="gt_title">' + tab.title
         + '</div><div style="clear:both"></div></div></div>');
   }
@@ -175,7 +175,7 @@ var update = function() {
   });
 }
 var stop = function() {
-   enders.unshift({
+  enders.unshift({
     type : HIDE_CONTENT
   });
 };
