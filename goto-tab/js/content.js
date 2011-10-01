@@ -127,39 +127,84 @@ var createBox = function(tab, selected) {
   }
   var hasImg = tab.img != "";
   var hasIcon = tab.icon != "";
+  var box = $("<div></div>");
+  var clear = $("<div style='clear:both'></div>");
+  box.addClass("gt_choice");
+  box.attr("data-id", "gt_tab_" + tab.id);
+  box.attr("data-tab-id", tab.id);
+
   if (hasImg && hasIcon) {
-    return $('<div class="gt_choice gt_all gt_unselected"'
-        + ' data-id="gt_tab_'
-        + tab.id
-        + '" data-tab-id="'
-        + tab.id
-        + '"><div><div class="gt_icon"><img src="'
-        + tab.icon
-        + '"/></div><div class="gt_title">'
-        + tab.title
-        + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
-        + tab.img + '"/></div></div>');
+    box.addClass("gt_all");
+    box.addClass("gt_unselected");
+
+    var icon = $("<div></div>")
+    icon.addClass("gt_icon");
+    icon.append($("<img></img>").attr("src", tab.icon));
+
+    var title = $("<div></div>");
+    title.addClass("gt_title");
+    title.html(tab.title);
+
+    var img = $("<div></div>")
+    img.addClass("gt_img");
+    img.append($("<img></img>").attr("src", tab.img));
+
+    var col = $("<div></div>");
+    col.append(icon);
+    col.append(title);
+    col.append(clear);
+    box.append(col);
+    box.append(img);
+    return box;
   } else if (hasImg) {
-    return $('<div class="gt_choice gt_all gt_unselected"'
-        + ' data-id="gt_tab_'
-        + tab.id
-        + '" data-tab-id="'
-        + tab.id
-        + '"><div><div class="gt_title">'
-        + tab.title
-        + '</div><div style="clear:both"></div></div><div style="gt_img"><img src="'
-        + tab.img + '"/></div></div>');
+    box.addClass("gt_all");
+    box.addClass("gt_unselected");
+
+    var title = $("<div></div>");
+    title.addClass("gt_title");
+    title.html(tab.title);
+
+    var img = $("<div></div>")
+    img.addClass("gt_img");
+    img.append($("<img></img>").attr("src", tab.img));
+
+    var col = $("<div></div>");
+    col.append(title);
+    col.append(clear);
+    box.append(col);
+    box.append(img);
+    return box;
   } else if (hasIcon) {
-    return $('<div class="gt_choice gt_mini gt_unselected"'
-        + ' data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
-        + '"><div><div class="gt_icon"><img src="' + tab.icon
-        + '"/></div><div class="gt_title">' + tab.title
-        + '</div><div style="clear:both;width:100%"></div></div></div>');
+    box.addClass("gt_mini");
+    box.addClass("gt_unselected");
+
+    var icon = $("<div></div>")
+    icon.addClass("gt_icon");
+    icon.append($("<img></img>").attr("src", tab.icon));
+
+    var title = $("<div></div>");
+    title.addClass("gt_title");
+    title.html(tab.title);
+
+    var col = $("<div></div>");
+    col.append(icon);
+    col.append(title);
+    col.append(clear);
+    box.append(col);
+    return box;
   } else {
-    return $('<div class="gt_choice gt_mini gt_unselected"'
-        + ' data-id="gt_tab_' + tab.id + '" data-tab-id="' + tab.id
-        + '"><div><div class="gt_title">' + tab.title
-        + '</div><div style="clear:both"></div></div></div>');
+    box.addClass("gt_mini");
+    box.addClass("gt_unselected");
+
+    var title = $("<div></div>");
+    title.addClass("gt_title");
+    title.html(tab.title);
+
+    var col = $("<div></div>");
+    col.append(title);
+    col.append(clear);
+    box.append(col);
+    return box;
   }
 };
 var update = function() {
