@@ -5,7 +5,7 @@
   "background_page": "background.html",
   "icons" : {"16" : "image/goto_tab_icon16x16.png","128":"image/goto_tab_icon128x128.png"},
   
-  // goto tab
+  //goto tab
   "name": "goto tab",
   "content_scripts": [
     {
@@ -18,11 +18,8 @@
   "permissions": ["tabs","notifications","https://*/*","http://*/*"]
   
   // goto tab (simple)
-  /*
-  "name": "goto tab (simple)",
-  // below is for goto tab (simple)
-  "options_page" : "simple_options.html",
-  "permissions": ["tabs","notifications"]
-  */
+  //"name": "goto tab (simple)",
+  //"options_page" : "simple_options.html",
+  //"permissions": ["tabs","notifications"]
   
 }

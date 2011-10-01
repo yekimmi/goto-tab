@@ -2,10 +2,10 @@
   background-color: #aaaaaa;
   z-index: 99999998;
   top: 0px;
-  left: 0px;
-  width: 100%;
+  left: 0px; width : 100%;
   height: 100%;
   position: fixed;
+  width: 100%;
 }
 
 #gt_main {
@@ -51,7 +51,7 @@
 
 .gt_icon {
   float: left;
-  margin: 1px;
+  padding: 2px;
 }
 
 .gt_icon img {
@@ -65,11 +65,12 @@
 
 .gt_title {
   font-family: Arial;
-  overflow: hidden;
+  font-size: 14px; 
+  overflow : hidden;
   white-space: nowrap;
-  font-size: 12px;
   padding: 3px;
   color: black;
   overflow: hidden;
   text-align: left;
+  overflow: hidden;
 }
