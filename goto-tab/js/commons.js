@@ -1,7 +1,36 @@
+// these will be changed between releases
+var IS_SIMPLE = false;
+
 var GET_HISTORY = "getHistory";
 var GET_SUGGESTIONS = "getSuggestions";
 var SUCCESS = "success";
 var ERROR = "error";
+
+function OptionStore() {
+  this.get = function(name, def) {
+    if (localStorage[name] == null) {
+      return def;
+    } else {
+      return JSON.parse(localStorage[name]);
+    }
+  };
+  this.set = function(name, val) {
+    localStorage[name] = JSON.stringify(val);
+  };
+}
+function Options() {
+  this.options = new OptionStore();
+  this.getIsDrawerEnabled = function() {
+    if (IS_SIMPLE) {
+      return false;
+    }
+    return this.options.get("DRAWER_ENABLED", true);
+  };
+  this.setIsDrawerEnabled = function(val) {
+    this.options.set("DRAWER_ENABLED", val);
+  }
+};
+var OPTIONS = new Options();
 
 function LinkedItem(obj) {
   this.obj = obj;
@@ -116,6 +145,7 @@ function TabHistory() {
         for (tabIndex in window.tabs) {
           var tab = window.tabs[tabIndex];
           var strId = "" + tab.id;
+          var old = self.tabs[strId];
           self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, old.img,
               tab.favIconUrl);
         }
@@ -145,30 +175,35 @@ function TabHistory() {
   };
   this.changeCallback = function(tabId, selectInfo) {
     this.history.moveToFront(tabId);
-    var self = this;
-    chrome.tabs.getSelected(null, function(tab) {
-      if (tab.url.indexOf("http") == 0) {
-        chrome.tabs.captureVisibleTab(null, function(dataUrl) {
-          var strId = "" + tabId;
-          var tabInfo = self.tabs[strId];
-          self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, tabInfo.url,
-              dataUrl, tab.favIconUrl);
-        });
-      }
-    });
+    if (OPTIONS.getIsDrawerEnabled()) {
+      var self = this;
+      chrome.tabs.getSelected(null, function(tab) {
+        if (tab.url.indexOf("http") == 0) {
+          chrome.tabs.captureVisibleTab(null, function(dataUrl) {
+            var strId = "" + tabId;
+            var tabInfo = self.tabs[strId];
+            self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, tabInfo.url,
+                dataUrl, tab.favIconUrl);
+          });
+        }
+      });
+    }
   };
   this.windowChangeCallback = function(windowId) {
     if (windowId == chrome.windows.WINDOW_ID_NONE) {
       return;
     }
     var self = this;
+
     chrome.tabs.getSelected(windowId, function(tab) {
       if (tab.url.indexOf("http") == 0) {
-        chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
-          var strId = "" + tab.id;
-          self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl,
-              tab.favIconUrl);
-        });
+        if (OPTIONS.getIsDrawerEnabled()) {
+          chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
+            var strId = "" + tab.id;
+            self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl,
+                tab.favIconUrl);
+          });
+        }
       }
       self.history.moveToFront(tab.id);
     });
@@ -214,9 +249,11 @@ function TabManager() {
   this.history = new TabHistory();
   this.startCallback = function() {
     this.history.startCallback();
-    chrome.tabs.executeScript(null, {
-      "code" : "run();"
-    });
+    if (OPTIONS.getIsDrawerEnabled()) {
+      chrome.tabs.executeScript(null, {
+        "code" : "run();"
+      });
+    }
   };
   this.updatedCallback = function(tabId, changeInfo, tab) {
     this.history.updatedCallback(tabId, changeInfo, tab);
@@ -238,9 +275,13 @@ function TabManager() {
       callback = function() {
       };
     }
-    chrome.tabs.executeScript(null, {
-      "code" : "stop();"
-    }, callback);
+    if (OPTIONS.getIsDrawerEnabled()) {
+      chrome.tabs.executeScript(null, {
+        "code" : "stop();"
+      }, callback);
+    } else {
+      callback();
+    }
   };
   this.getLastViewed = function() {
     return this.history.getLastViewed();
@@ -265,9 +306,11 @@ function TabManager() {
     this.history.findTabs(search, function(tabs) {
       callback(tabs);
     });
-    chrome.tabs.executeScript(null, {
-      "code" : "update();"
-    });
+    if (OPTIONS.getIsDrawerEnabled()) {
+      chrome.tabs.executeScript(null, {
+        "code" : "update();"
+      });
+    }
   };
   this.getHistory = function() {
     return this.history.getHistory();

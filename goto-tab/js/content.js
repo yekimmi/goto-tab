@@ -41,7 +41,6 @@ var animate = function() {
   } else if (lastAnimation.time.getTime() < animation.time.getTime() && started) {
     // first get it
     lastAnimation = animation;
-    console.log("do " + lastAnimation.time.getTime());
     var next = lastAnimation.todo;
     // then timestamp when i do it
     animationLastTime = new Date();
@@ -59,7 +58,6 @@ var animate = function() {
       }
       $("div[data-id]").each(function(index) {
         var ob = $(this);
-        console.log("remove < " + !suggested[ob.attr("data-tab-id") + ""]);
         if (!suggested[ob.attr("data-tab-id")]) {
           ob.removeAttr("data-selected");
           ob.removeClass("gt_selected");

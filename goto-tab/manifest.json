@@ -1,10 +1,12 @@
 {
-  "name": "goto tab",
   "version": "1.0.4",
   "description": "Tab extension to quickly go between tabs via the omnibox!",
   "omnibox" : {"keyword" : "gt"},
   "background_page": "background.html",
   "icons" : {"16" : "image/goto_tab_icon16x16.png","128":"image/goto_tab_icon128x128.png"},
+  
+  // goto tab
+  "name": "goto tab",
   "content_scripts": [
     {
       "matches": ["http://*/*","https://*/*"],
@@ -12,6 +14,15 @@
       "js": ["js/commons.js","js/jquery-1.6.3.min.js", "js/jquery.hotkeys.js","js/jquery-ui-1.8.16.custom.min.js","js/jquery.quicksand.js","js/content.js"]
     }
   ],
+  "options_page" : "options.html",
   "permissions": ["tabs","notifications","https://*/*","http://*/*"]
+  
+  // goto tab (simple)
+  /*
+  "name": "goto tab (simple)",
+  // below is for goto tab (simple)
+  "options_page" : "simple_options.html",
+  "permissions": ["tabs","notifications"]
+  */
   
 }

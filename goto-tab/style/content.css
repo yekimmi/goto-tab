@@ -64,10 +64,12 @@
 }
 
 .gt_title {
+  font-family: Arial;
   overflow: hidden;
   white-space: nowrap;
   font-size: 12px;
   padding: 3px;
   color: black;
   overflow: hidden;
+  text-align: left;
 }

@@ -203,7 +203,6 @@ $(function() {
             });
             for ( var index in history) {
               var item = history[index];
-              console.log(item.info);
               var box = $('<div class="grid_element"><div><table><tr><td><img src="' + item.info.icon + '"/><span style="font-size:12px;padding:10px"></td><td>'
                   + item.info.title
                   + '</td></tr></table></div><div><img style="height:300px" src="'
