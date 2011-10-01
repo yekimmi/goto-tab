@@ -1,7 +1,12 @@
 This is a chrome extension that uses the omnibox to navigate between tabs.
 
-
 Releases:
+
+v1.1
+
+* Search also through URL of tabs
+* Popout drawer on page with options page to toggle off or on
+* 2 versions of extension for different permissions. One with pop out drawer and one without
 
 v1.0.4
 
