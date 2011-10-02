@@ -255,7 +255,6 @@ function TabHistory() {
       var tab = self.tabs[strId];
       var findIndex = tab.searchable.toLowerCase().indexOf(search);
       if (addLastViewed && index == 1) {
-        console.log(index);
         // add it to front
         tabs.unshift({
           tab : tab,
