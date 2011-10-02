@@ -32,7 +32,7 @@ chrome.windows.getAll({
     var window = windows[index];
     for (tabIndex in window.tabs) {
       var tab = window.tabs[tabIndex];
-      MANAGER.history.add(tab.id, tab.title, tab.url, tab.favIconUrl);
+      MANAGER.addToHistory(tab);
     }
   }
 });

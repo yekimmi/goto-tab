@@ -129,10 +129,21 @@ function TabHistory() {
   this.history = new LinkedList();
   this.tabs = {};
   this.lastSuggestions = [];
-  this.add = function(id, title, url, icon) {
+  this.addTab = function(id, title, url, icon) {
     var strId = "" + id;
-    this.tabs[strId] = new Tab(id, title, url, undefined, icon);
-    this.history.unshift(id);
+    var self = this;
+    if (icon) {
+      var im = new Image();
+      im.src = icon;
+      im.onload = function() {
+        var data = getBase64Image(this);
+        this.tabs[strId] = new Tab(id, title, url, undefined, data);
+        this.history.push(id);
+      };
+    } else {
+      this.tabs[strId] = new Tab(id, title, url);
+      this.history.push(id);
+    }
   };
   this.startCallback = function() {
     var self = this;
@@ -147,7 +158,7 @@ function TabHistory() {
           var strId = "" + tab.id;
           var old = self.tabs[strId];
           self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, old.img,
-              tab.favIconUrl);
+              old.icon);
         }
       }
     });
@@ -158,16 +169,12 @@ function TabHistory() {
     delete this.tabs[strId];
   };
   this.createdCallback = function(tab) {
-    var strId = "" + tab.id;
-    this.tabs[strId] = new Tab(tab.id, tab.title, tab.url);
-    this.history.push(tab.id);
+    this.addTab(tab.id, tab.title, tab.url, tab.favIconUrl);
   };
   this.updatedCallback = function(tabId, changeInfo, tab) {
     if (tab.title != undefined) {
-      var strId = "" + tabId;
-      var old = this.tabs[strId];
-      this.tabs[strId] = new Tab(tabId, tab.title, tab.url, old.img,
-          tab.favIconUrl);
+      var old = this.tabs[tabId + ""];
+      this.updateTab(tab, old.img, tab.favIconUrl);
     }
   };
   this.removeCallback = function(tabId, removeInfo) {
@@ -180,10 +187,8 @@ function TabHistory() {
       chrome.tabs.getSelected(null, function(tab) {
         if (tab.url.indexOf("http") == 0) {
           chrome.tabs.captureVisibleTab(null, function(dataUrl) {
-            var strId = "" + tabId;
-            var tabInfo = self.tabs[strId];
-            self.tabs[strId] = new Tab(tabInfo.id, tabInfo.title, tabInfo.url,
-                dataUrl, tab.favIconUrl);
+            var tabInfo = self.tabs[tab.id + ""];
+            self.updateTab(tabInfo, dataUrl, tab.favIconUrl);
           });
         }
       });
@@ -199,15 +204,28 @@ function TabHistory() {
       if (tab.url.indexOf("http") == 0) {
         if (OPTIONS.getIsDrawerEnabled()) {
           chrome.tabs.captureVisibleTab(null, null, function(dataUrl) {
-            var strId = "" + tab.id;
-            self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl,
-                tab.favIconUrl);
+            self.updateTab(tab, dataUrl, tab.favIconUrl);
           });
         }
       }
       self.history.moveToFront(tab.id);
     });
   };
+  this.updateTab = function(tab, dataUrl, iconUrl) {
+    var self = this;
+    if (iconUrl) {
+      var im = new Image();
+      im.src = iconUrl;
+      im.onload = function() {
+        var data = getBase64Image(this);
+        var strId = "" + tab.id;
+        self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl, data);
+      };
+    } else {
+      var strId = "" + tab.id;
+      self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl);
+    }
+  }
   this.hasLastViewed = function() {
     return this.history.first != null && this.history.first.next != null;
   };
@@ -255,6 +273,10 @@ function TabManager() {
       });
     }
   };
+
+  this.addToHistory = function(tab) {
+    this.history.addTab(tab.id, tab.title, tab.url, tab.icon);
+  }
   this.updatedCallback = function(tabId, changeInfo, tab) {
     this.history.updatedCallback(tabId, changeInfo, tab);
   };
@@ -325,4 +347,13 @@ function encodeSpecial(toEncode) {
   text = text.replace(/</g, "&lt;");
   text = text.replace(/>/g, "&gt;");
   return text;
+}
+
+function getBase64Image(img) {
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  return canvas.toDataURL("image/png");
 }
