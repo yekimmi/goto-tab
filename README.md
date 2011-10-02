@@ -1,5 +1,6 @@
 This is a chrome extension that uses the omnibox to navigate between tabs.
 
+
 Releases:
 
 v1.1
@@ -31,3 +32,10 @@ v1.0.0
 
 * "gt" then tab : search through tabs using title match
 * "gt" then - : goes to the last tab
+
+
+Known Issues
+
+* When toggling through suggestions in omnibox, the overlay on page disappears. This is due to Chromes event sequence for omnibox events.
+* Only http/https pages have page suggestions because Chromes Extension API doesn't allow content scripts in those pages
+* Only "gt" can be used as the keyword due to Chrome Extension API restrictions
