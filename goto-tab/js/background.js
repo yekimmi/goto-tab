@@ -48,22 +48,11 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   // return;
   // }
 
-  if (text == "-" || text == "-last") {
-    // go to last if exists
-    MANAGER.goTo(MANAGER.getLastViewed().searchable);
-  } else {
-    MANAGER.goTo(text);
-  }
+  MANAGER.goTo(text);
 });
 chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
   var suggestions = [];
   search = search.trim();
-  if (search == "-" && MANAGER.hasLastViewed()) {
-    suggestions.push({
-      content : "-last",
-      description : "last viewed tab"
-    });
-  }
   // this was just experimental grid stuff
   // if (search == "") {
   // suggestions.push({
@@ -72,6 +61,7 @@ chrome.omnibox.onInputChanged.addListener(function(search, suggest) {
   // });
   // }
   MANAGER.updateSuggestions(search, function(tabs) {
+    var last = null;
     for (tabIndex in tabs) {
       var tabInfo = tabs[tabIndex];
       var tab = tabInfo.tab;

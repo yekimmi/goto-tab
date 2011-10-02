@@ -107,11 +107,13 @@ function LinkedList() {
   };
   this.forEach = function(callback) {
     var item = this.first;
+    var index = 0;
     while (item != null) {
-      var go = callback(item.obj);
+      var go = callback(item.obj, index);
       if (go != undefined && !go) {
         break;
       }
+      index = index + 1;
       item = item.next;
     }
   }
@@ -236,7 +238,7 @@ function TabHistory() {
   this.getHistory = function() {
     var tabs = [];
     var self = this;
-    this.history.forEach(function(tabId) {
+    this.history.forEach(function(tabId, index) {
       var strId = "" + tabId;
       var tab = self.tabs[strId];
       tabs.push(tab);
@@ -247,11 +249,20 @@ function TabHistory() {
     search = search.toLowerCase();
     var tabs = [];
     var self = this;
-    this.history.forEach(function(tabId) {
+    var addLastViewed = search == "-"; // to support last viewed
+    this.history.forEach(function(tabId, index) {
       var strId = "" + tabId;
       var tab = self.tabs[strId];
       var findIndex = tab.searchable.toLowerCase().indexOf(search);
-      if (findIndex != -1) {
+      if (addLastViewed && index == 1) {
+        console.log(index);
+        // add it to front
+        tabs.unshift({
+          tab : tab,
+          index : findIndex,
+          searchable : tab.searchable
+        });
+      } else if (findIndex != -1) {
         tabs.push({
           tab : tab,
           index : findIndex,
