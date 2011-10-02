@@ -1,5 +1,5 @@
 // these will be changed between releases
-var IS_SIMPLE = false;
+var IS_SIMPLE = true;
 
 var GET_HISTORY = "getHistory";
 var GET_SUGGESTIONS = "getSuggestions";
