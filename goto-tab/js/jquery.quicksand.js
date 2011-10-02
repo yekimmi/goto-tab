@@ -213,7 +213,7 @@ Github site: http://github.com/razorjack/quicksand
                                                 animation: 
                                                     {top: destElement.offset().top - correctionOffset.top, 
                                                      left: destElement.offset().left - correctionOffset.left, 
-                                                     opacity: 1.0
+                                                     opacity: (options.useOpacity ? $(this).css("opacity") : 1.0)
                                                     }
                                             });
 
@@ -222,7 +222,7 @@ Github site: http://github.com/razorjack/quicksand
                                             element: $(this), 
                                             animation: {top: destElement.offset().top - correctionOffset.top, 
                                                         left: destElement.offset().left - correctionOffset.left, 
-                                                        opacity: 1.0, 
+                                                        opacity: (options.useOpacity ? $(this).css("opacity") : 1.0),
                                                         scale: '1.0'
                                                        }
                                             });

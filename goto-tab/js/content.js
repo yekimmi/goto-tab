@@ -66,7 +66,8 @@ var animate = function() {
       });
       if (main.css("opacity") == 0) {
         content.quicksand(destination.children(), {
-          duration : 1
+          duration : 1,
+          useOpacity : true
         }, function() {
           main.hide();
           main.css("opacity", 1);
@@ -80,7 +81,8 @@ var animate = function() {
         });
       } else {
         content.quicksand(destination.children(), {
-          duration : 300
+          duration : 300,
+          useOpacity : true
         }, function() {
           setTimeout(animate, 30);
         });
