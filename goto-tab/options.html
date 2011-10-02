@@ -1,5 +1,53 @@
 <html>
 <head>
+<style>
+body {
+  font-family: helvetica, arial, sans-serif;
+}
+
+.settings-content {
+  margin: 6px 6px 0 6px;
+  padding: 10px 10px 10px 10px;
+  color: #333;
+  border: 1px solid #DEDEDE;
+  -webkit-border-radius: 5px 5px;
+}
+
+.setings-table {
+  width: 100%;
+}
+
+.settings-table td {
+  white-space: nowrap;
+  padding: 12px;
+}
+
+#header {
+  padding-bottom: 1.5em;
+  padding-top: 1.5em;
+}
+
+#header h1 {
+  font-size: 156%;
+  display: inline;
+  padding-bottom: 43px;
+  padding-left: 75px;
+  padding-top: 40px;
+  background: url(image/goto_tab_icon128x128.png) no-repeat;
+  background-size: 67px;
+  background-position: 1px 18px;
+}
+
+#footer {
+  margin-left: 24px;
+  margin-top: 12px;
+}
+
+.option {
+  font-weight: 800;
+  text-align: right;
+}
+</style>
 <script src='js/jquery-1.6.3.min.js' type='text/javascript'></script>
 <script src='js/commons.js' type='text/javascript'></script>
 <script>
@@ -13,11 +61,19 @@
 </script>
 </head>
 <body>
-  <div>
-    Enabled slide out tab preview drawer: <input id="drawer_enabled"
-      type="checkbox">
+  <div id="header">
+    <h1>goto tab options</h1>
   </div>
-  <div>
+  <div class="settings-content">
+    <table class="settings-table">
+      <tr>
+        <td class="option">Page over slide out drawer</td>
+        <td><input id="drawer_enabled" type="checkbox"><label
+          for="drawer_enabled">Enabled</label></td>
+      </tr>
+    </table>
+  </div>
+  <div id="footer">
     <button onclick="javascript:save()">save</button>
   </div>
 </body>

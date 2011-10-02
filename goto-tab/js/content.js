@@ -150,6 +150,7 @@ var createBox = function(tab, selected) {
     img.append($("<img></img>").attr("src", tab.img));
 
     var col = $("<div></div>");
+    col.addClass("gt_tab");
     col.append(icon);
     col.append(title);
     col.append(clear);
@@ -169,6 +170,7 @@ var createBox = function(tab, selected) {
     img.append($("<img></img>").attr("src", tab.img));
 
     var col = $("<div></div>");
+    col.addClass("gt_tab");
     col.append(title);
     col.append(clear);
     box.append(col);
@@ -187,6 +189,7 @@ var createBox = function(tab, selected) {
     title.html(tab.title);
 
     var col = $("<div></div>");
+    col.addClass("gt_tab");
     col.append(icon);
     col.append(title);
     col.append(clear);
@@ -201,6 +204,7 @@ var createBox = function(tab, selected) {
     title.html(tab.title);
 
     var col = $("<div></div>");
+    col.addClass("gt_tab");
     col.append(title);
     col.append(clear);
     box.append(col);
