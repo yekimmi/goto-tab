@@ -139,8 +139,8 @@ function TabHistory() {
       im.src = icon;
       im.onload = function() {
         var data = getBase64Image(this);
-        this.tabs[strId] = new Tab(id, title, url, undefined, data);
-        this.history.push(id);
+        self.tabs[strId] = new Tab(id, title, url, undefined, data);
+        self.history.push(id);
       };
     } else {
       this.tabs[strId] = new Tab(id, title, url);
