@@ -8,6 +8,10 @@ v1.1 (unreleased)
 * Popout drawer on page with options page to toggle off or on
 * 2 versions of extension for different permissions. One with pop out drawer and one without
 
+v1.0.6
+
+* Major bug fix with handling instant load pages or omnibox pages
+
 v1.0.5
 
 * Search also through URL of tabs
