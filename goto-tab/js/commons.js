@@ -1,5 +1,5 @@
 // these will be changed between releases
-var IS_SIMPLE = false;
+var IS_SIMPLE = true;
 
 var GET_HISTORY = "getHistory";
 var GET_SUGGESTIONS = "getSuggestions";
@@ -138,7 +138,10 @@ function TabHistory() {
       var im = new Image();
       im.src = icon;
       im.onload = function() {
-        var data = getBase64Image(this);
+        var data = undefined;
+        if (!IS_SIMPLE) {
+          data = getBase64Image(this);
+        }
         self.tabs[strId] = new Tab(id, title, url, undefined, data);
         self.history.push(id);
       };
@@ -219,7 +222,10 @@ function TabHistory() {
       var im = new Image();
       im.src = iconUrl;
       im.onload = function() {
-        var data = getBase64Image(this);
+        var data = undefined;
+        if (!IS_SIMPLE) {
+          data = getBase64Image(this);
+        }
         var strId = "" + tab.id;
         self.tabs[strId] = new Tab(tab.id, tab.title, tab.url, dataUrl, data);
       };
